@@ -96,9 +96,9 @@ learn-docs/
 - [x] 已记录代码基线提交。
 - [x] 已明确文档目录和阶段路线。
 - [x] 修正 `overview-guide.md` 中的旧目录说明和失效链接。
-- [x] 验证 `ai-dev` 环境、Python、pytest 和 ruff 版本。
-- [ ] CLI 入口验证：当前缺少 `loguru`，补齐依赖后重试。
-- [x] Bus 出站事件定向测试通过（9 passed；pytest 提示 `asyncio_mode` 未识别）。
+- [x] 验证 `nanobot-learn-dev` 环境、Python、pytest 和 ruff 版本。
+- [x] CLI 入口验证：`nanobot-learn-dev` 中 CLI 可正常加载（退出码 0）。
+- [x] Bus 出站事件定向测试通过（9 passed）。
 
 ### 阶段 1：CLI 入口与 MessageBus
 
@@ -394,12 +394,12 @@ test: 添加 AgentRunner 工具循环学习实验
 
 ## 7. 当前推进项
 
-阶段 0 的下一步：
+阶段 0 已完成，进入阶段 1：
 
 1. 已完成：校正 `overview-guide.md` 的目录说明和相对链接。
-2. 已完成：记录 `ai-dev` 环境的 Python、Pydantic、pytest 和 ruff 版本。
-3. 部分完成：Bus 定向测试通过；CLI 帮助因缺少 `loguru` 待依赖补齐后重试。
-4. 待处理：确认依赖安装方案后完成阶段 0，再进入阶段 1。
+2. 已完成：记录 `nanobot-learn-dev` 环境的 Python、Pydantic、pytest 和 ruff 版本。
+3. 已完成：CLI 帮助、`pip check` 和 Bus 定向测试均通过。
+4. 当前学习主题：CLI 入口与 MessageBus。
 
 ## 8. 关联资料
 
@@ -416,14 +416,15 @@ test: 添加 AgentRunner 工具循环学习实验
 
 | 检查项 | 结果 |
 |---|---|
+| 验证环境 | `nanobot-learn-dev` |
 | 当前分支 | `nanobot-learn` |
 | 代码基线 | `93571149` |
-| Python | `3.11.11` |
+| Python | `3.12.13` |
 | Pydantic | `2.13.4` |
-| pytest | `8.4.1` |
+| pytest | `9.1.1` |
 | ruff | `0.15.22` |
+| pip check | 通过 |
+| nanobot CLI | 通过，退出码 0 |
 | Bus 定向测试 | 9 passed |
-| nanobot CLI | 未通过，缺少 `loguru` |
-| pytest 异步配置 | 有警告，`asyncio_mode` 未识别 |
 
-当前阻塞仅限开发环境依赖完整性，不影响对 Bus 代码和测试的初步学习。是否安装缺失依赖，待确认后再执行；安装完成后应重新运行 CLI 帮助和相关测试。
+阶段 0 验收已完成，后续进入阶段 1。
