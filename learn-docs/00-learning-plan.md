@@ -52,7 +52,8 @@ learn-docs/
 ├── 05-provider-and-config.md
 ├── 06-channel-gateway-webui.md
 ├── 07-security-and-extension.md
-├── 08-capstone-review.md
+├── 08-architecture-and-design-philosophy.md
+├── 09-capstone-review.md
 └── experiments/
 ```
 
@@ -306,7 +307,44 @@ learn-docs/
 - 能列出主要信任边界、威胁入口和对应防护。
 - 能为一个扩展需求选择合适的 Tool、Skill、MCP 或 Subagent 机制。
 
-### 阶段 8：综合复盘与小型实践
+### 阶段 8：架构、设计模式与设计哲学
+
+**目标**
+
+基于阶段 1～7 的源码、测试和运行证据，归纳 nanobot 的整体架构、设计模式、核心取舍与工程哲学。
+
+**核心问题**
+
+- nanobot 如何划分渠道、消息总线、Agent 核心、Provider、Tool 和持久化边界？
+- 哪些设计模式真实存在于源码中，它们解决了什么问题？
+- 哪些结论是源码事实，哪些是基于实现的设计推断？
+- nanobot 如何在轻量化、可扩展性、安全性和可观测性之间取舍？
+
+**重点分析**
+
+- MessageBus：事件驱动、生产者/消费者和解耦。
+- AgentLoop：状态机、会话隔离和依赖注入。
+- AgentRunner：模型—工具迭代循环、流式处理和运行时治理。
+- Provider：策略、适配器、注册表和工厂组合。
+- Tool、Channel、Skill、MCP：发现机制、插件化和扩展边界。
+- Session、Memory 和 Workspace：持久化、恢复、压缩和长期记忆。
+- Security：工作区、Shell、网络和渠道访问控制边界。
+
+**分析方法**
+
+1. 先引用源码位置和测试证据，再给出模式名称。
+2. 对每个模式记录适用场景、收益、代价和潜在限制。
+3. 明确区分“实现事实”和“个人推断”。
+4. 不使用外部文章替代对 nanobot 源码的理解。
+
+**产物与验收**
+
+- 文档：`08-architecture-and-design-philosophy.md`。
+- 形成一张 nanobot 总体架构图和一张模块职责表。
+- 形成“源码证据 → 设计模式 → 收益/代价”的分析表。
+- 能解释至少五个核心设计取舍，并指出对应源码和测试。
+
+### 阶段 9：综合复盘与小型实践
 
 **目标**
 
@@ -321,7 +359,7 @@ learn-docs/
 
 **产物与验收**
 
-- 文档：`08-capstone-review.md`。
+- 文档：`09-capstone-review.md`。
 - 形成一张端到端调用图和一份源码导航表。
 - 小型实践具备设计说明、完整代码和对应测试。
 - 能脱离笔记口述 nanobot Agent 的主要运行机制。

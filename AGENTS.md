@@ -5,7 +5,9 @@
 **项目环境**（本地已经安装）：
 
 ```bash
-conda activate ai-dev
+conda create -n nanobot-learn-dev python=3.12
+
+conda activate nanobot-learn-dev
 ```
 
 
