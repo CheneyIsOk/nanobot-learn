@@ -1,81 +1,96 @@
-This file provides guidance to AI coding agents working with this repository.
+## 项目说明
 
-## Project Overview
+一份 [nanobot](https://github.com/HKUDS/nanobot) 教程，并基于 nanobot 学习Agent框架体系。
 
-nanobot is a lightweight, open-source AI agent framework written in Python with a React/TypeScript WebUI. It centers around a small agent loop that receives messages from chat channels, invokes an LLM provider, executes tools, and manages session memory.
-
-## Development Commands
+**项目环境**（本地已经安装）：
 
 ```bash
-# Python: run single test / lint
-pytest tests/test_openai_api.py::test_function -v
-ruff check nanobot/
-
-# WebUI: dev server (proxies API/WS to gateway :8765), build, test
-# Build outputs to ../nanobot/web/dist (bundled into the Python wheel)
-cd webui && bun run dev      # or NANOBOT_API_URL=... bun run dev
-cd webui && bun run build
-cd webui && bun run test
-
-# Gateway
-nanobot gateway
+conda activate ai-dev
 ```
 
-## High-Level Architecture
 
-### Core Data Flow
+***
 
-Messages flow through an async `MessageBus` (`nanobot/bus/queue.py`) that decouples chat channels from the agent core:
 
-1. **Channels** (`nanobot/channels/`) receive messages from external platforms and publish `InboundMessage` events to the bus.
-2. **`AgentLoop`** (`nanobot/agent/loop.py`) consumes inbound messages, builds context, and coordinates the turn.
-3. **`AgentRunner`** (`nanobot/agent/runner.py`) handles the actual LLM conversation loop: send messages to the provider, receive tool calls, execute tools, and stream responses.
-4. Responses are published as `OutboundMessage` events back to the appropriate channel.
+## Python规范
 
-### Key Subsystems
+**命名规范**
 
-- **Agent Loop** (`nanobot/agent/loop.py`, `runner.py`): The core processing engine. `AgentLoop` manages session keys, hooks, and context building. `AgentRunner` executes the multi-turn LLM conversation with tool execution.
-- **LLM Providers** (`nanobot/providers/`): Provider implementations (Anthropic, OpenAI-compatible, OpenAI Responses API, Azure, Bedrock, GitHub Copilot, OpenAI Codex, etc.) built on a common base (`base.py`). Includes image generation (`image_generation.py`) and audio transcription (`transcription.py`). `factory.py` and `registry.py` handle instantiation and model discovery.
-- **Channels** (`nanobot/channels/`): Platform integrations (Telegram, Discord, Slack, Feishu, Matrix, WhatsApp, QQ, WeChat, WeCom, DingTalk, Email, MoChat, MS Teams, WebSocket, Mattermost). `manager.py` discovers and coordinates them. Channels are self-contained packages auto-discovered via `pkgutil` scanning.
-- **Tools** (`nanobot/agent/tools/`): Agent capabilities exposed to the LLM: filesystem (read/write/edit/list), shell execution (with sandbox backends), web search/fetch, MCP servers, cron, notebook editing, subagent spawning, long-running tasks / sustained goals (`long_task.py`), image generation, and self-modification. Tools are auto-discovered via `pkgutil` scan + entry-point plugins.
-- **Memory** (`nanobot/agent/memory.py`): Session history persistence with Dream two-phase memory consolidation. Uses atomic writes with fsync for durability.
-- **Session Management** (`nanobot/session/`): Per-session history, context compaction, TTL-based auto-compaction (`manager.py`), and sustained goal state tracking (`goal_state.py`).
-- **Config** (`nanobot/config/schema.py`, `loader.py`): Pydantic-based configuration loaded from `~/.nanobot/config.json`. Supports camelCase aliases for JSON compatibility.
-- **WebUI** (`webui/`): Vite-based React SPA that talks to the gateway over a WebSocket multiplex protocol. The dev server proxies `/api`, `/webui`, `/auth`, and WebSocket traffic to the gateway.
-- **API Server** (`nanobot/api/server.py`): OpenAI-compatible HTTP API (`/v1/chat/completions`, `/v1/models`) for programmatic access.
-- **Command Router** (`nanobot/command/`): Slash command routing and built-in command handlers.
-- **Heartbeat** (`nanobot/templates/HEARTBEAT.md`): Periodic task list checked via `cron` jobs (legacy dedicated service removed).
-- **Pairing** (`nanobot/pairing/`): DM sender approval store with persistent pairing codes per channel.
-- **Skills** (`nanobot/skills/`): Built-in skill definitions (cron, github, image-generation, etc.) loaded into agent context.
-- **Security** (`nanobot/security/`): PTH file guard and other security measures activated at CLI entry.
+- 变量和函数使用 snake_case（小写字母加下划线）
+- 类名使用 PascalCase（首字母大写的驼峰命名法）
+- 常量使用 UPPER_SNAKE_CASE（全大写加下划线）
+- 使用能清晰表达用途的描述性名称
 
-### Entry Points
+**代码风格**
 
-- **CLI**: `nanobot/cli/commands.py`
-- **Python SDK**: `nanobot/nanobot.py`
+- 每行最大长度为 88 个字符
+- 使用 Python 3.11+ 语法
+- 遵循 PEP8 代码风格
+- 函数(方法)长度不超过100行
+- 函数参数必须添加类型提示(Type Hints)
+- 函数必须添加注释, 使用`""" 函数备注 """`进行备注(函数备注前后为空格, 一行结束无需逗号), 如下:
 
-## Project-Specific Notes
+```python
+def func() -> Return Type:
+    """" func 简易备注 """
+    ...
+```
 
-- Architecture constraints: [`.agent/design.md`](.agent/design.md)
-- Security boundaries: [`.agent/security.md`](.agent/security.md)
-- Common gotchas: [`.agent/gotchas.md`](.agent/gotchas.md)
+- 新建Python脚本开头内容固定, 如果脚本内容变更, 仅需更新@Desc部分:
 
-## Contribution Flow
+```python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+'''
+@File    :  文件名称.py
+@Time    :  当前日期 当前时间(YYYY/MM/DD HH:MM:SS)
+@Author  :  XY
+@Desc    :  简洁描述, 如果是功能脚本, 补充使用方式
+'''
+```
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for contribution flow and PR guidelines.
 
-## Code Style
+***
 
-- Python 3.11+, asyncio throughout.
-- Line length: 100.
-- Linting: `ruff` with rules E, F, I, N, W (E501 ignored).
-- pytest with `asyncio_mode = "auto"`.
 
-## Common File Locations
+## 工作原则
 
-- Config schema: `nanobot/config/schema.py`
-- Provider base / new provider template: `nanobot/providers/base.py`
-- Channel base / new channel template: `nanobot/channels/base.py`
-- Tool registry: `nanobot/agent/tools/registry.py`
-- WebUI dev proxy config: `webui/vite.config.ts`
-- Tests mirror the `nanobot/` package structure.
+**需求开发**
+
+- 将测试代码单独放在 `tests/` 目录中，测试通过后再交付。
+- 遵循原则：KISS(Keep It Simple, Stupid), DRY(Do Not Repeat Yourself)
+- 不要过度封装和设计，代码实现平衡可读性和性能。
+- 发现 bug 或逻辑问题时，同时给出修复方案。
+
+**变动前先说明方案**
+
+- 每次修改或新增功能，先用 2-3 句话说明计划（涉及哪些文件、什么逻辑），确认后再写代码。
+
+**聚焦当前任务**
+
+- 不顺手重构无关代码。
+- 不修改与本次任务无关的文件。
+- 发现无关问题用 `# TODO: 建议优化 xxx` 标注，不要直接改。
+
+**不确定的先问**
+
+- 不自行假设业务逻辑，遇到模糊需求先确认。
+
+**完整可运行的代码**
+
+- 不输出伪代码或截断代码。文件较长时分段标注"第 N 部分，共 M 部分"。
+
+
+**日志记录**
+
+- 关键位置添加日志，方便排查问题。
+
+**任务交付**
+
+- 每完成一个可独立验收的Task，最终回复必须先说明本次改动、验证结果和遗留风险。
+- 若本次Task产生可提交的文件改动，必须给出中文Commit信息：
+   1. 标题使用`type: 中文描述`格式，如`feat: ...`、`fix: ...`、`chore: ...`、`docs: ...`、`ci: ...`。
+   2. 按需补充中文正文，概括主要改动；不得在未经用户明确授权时自动暂存或提交。
+- 若本次Task未产生文件改动，明确说明“本任务无可提交改动，无需Commit”。
+- Commit信息之后必须给出下一阶段执行推进内容，包括目标、主要步骤、可行性/风险和验收条件；没有明确下一阶段时，说明当前剩余事项或建议方向。
+- 下一阶段涉及代码或重要配置修改时，仍需先说明方案与风险，并在获得用户确认后执行。
