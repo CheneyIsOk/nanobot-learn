@@ -382,8 +382,7 @@ sequenceDiagram
 | Unit of Work 线索 | RESTORE/BUILD/SAVE 边界 | Turn 作为一次有提交点的工作单元 |
 | Scoped Context | `TurnContext`、`RequestContext` | 控制状态和执行元数据的生命周期 |
 
-“模式名称”是为帮助学习而做的映射；最终应以职责、边界和变化原因优先，不为了
-套模式而套模式。
+“模式名称”是为帮助学习而做的映射；最终应以职责、边界和变化原因优先，不为了套模式而套模式。
 
 ## 13. 验证记录
 

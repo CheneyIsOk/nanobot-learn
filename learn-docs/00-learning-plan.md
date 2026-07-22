@@ -394,14 +394,17 @@ test: 添加 AgentRunner 工具循环学习实验
 
 ## 7. 当前推进项
 
-阶段 0～2 已完成，下一步进入阶段 3：
+阶段 0～3 已完成，下一步进入阶段 4：
 
 1. 已完成：建立学习基线，验证开发环境、CLI 和基础 Bus 测试。
 2. 已完成：梳理 CLI 入口、消息模型与 MessageBus，产出
    `01-cli-and-message-bus.md`。
 3. 已完成：梳理 AgentLoop 状态机、上下文构建、命令短路、取消与检查点，
    67 项定向测试通过，产出 `02-agent-loop-and-context.md`。
-4. 下一学习主题：AgentRunner 与工具执行闭环。
+4. 已完成：串联 Context、AgentLoop、AgentRunner 与 Tool 核心链路，
+   Fake Provider/Fake Tool 实验和 230 项定向测试通过，产出
+   `03-agent-runner-and-tools.md`。
+5. 下一学习主题：Session、Context 与 Memory。
 
 ## 8. 关联资料
 
